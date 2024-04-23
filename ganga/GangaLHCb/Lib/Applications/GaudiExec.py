@@ -569,10 +569,10 @@ class GaudiExec(IPrepareApp):
             if self.useApptainer or 'slc6' in self.platform:
                 try:
                     logger.info('Building inside apptainer: %s' % self.containerLocation)
-                    cmd_to_run = 'apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro '\
+                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro '\
                                  + self.containerLocation + ' ' + cmd_file.name
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
-                except:
+                except BaseException:
                     logger.error('Failed to build the application inside a container. '
                                  'Perhaps the specified container location is not accessible.')
                     raise GangaException('Failed to execute make command')

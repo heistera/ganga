@@ -210,6 +210,8 @@ def prepareCommand(app):
             full_cmd += ' dbTags.py'
         if app.extraArgs:
             full_cmd += " " + " ".join(app.extraArgs)
+    if app.apptainerBuild:
+        full_cmd = 'apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro /cvmfs/cernvm-prod.cern.ch/cvm4  bash -c "%s"' % full_cmd
 
     return full_cmd
 

@@ -196,7 +196,7 @@ class GaudiExec(IPrepareApp):
                                  doc='Number of cores to be provided via the "-j" option to the "make" command'\
                                      'when building the ganga-input-sandbox'),
         'useApptainer' : SimpleItem(defvalue=False, doc="Run the commands in apptainer"),
-        'containerLocation' : SimpleItem(defvalue='/cvmfs/cernvm-prod.cern.ch/cvm4',
+        'containerLocation' : SimpleItem(defvalue='/cvmfs/lhcb.cern.ch/containers/os-base/slc6-devel/prod/amd64',
                                          doc='Where is the container to use for the build located'),
         # Prepared job object
         'is_prepared': SimpleItem(defvalue=None, strict_sequence=0, visitable=1, copyable=1, hidden=0,
@@ -552,8 +552,8 @@ class GaudiExec(IPrepareApp):
         # command reliably... so we're just going to be explicit
 
         if not path.isfile(path.join(self.directory, 'build.%s' % self.platform, 'run')):
-            initialCommand = 'export CMTCONFIG=%s && source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh --cmtconfig=%s && make -j%s' % (
-                self.platform, self.platform, self.nMakeCores)
+            initialCommand = 'export CMTCONFIG=%s && export BINARY_TAG=%s && source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh --cmtconfig=%s && make -j%s' % (
+                self.platform, self.platform, self.platform, self.nMakeCores)
             if isLbEnv:
                 initialCommand = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && source LbLogin.sh -c %s && make -j%s' % (
                     self.platform, self.nMakeCores)
@@ -569,8 +569,9 @@ class GaudiExec(IPrepareApp):
             if self.useApptainer or 'slc6' in self.platform:
                 try:
                     logger.info('Building inside apptainer: %s' % self.containerLocation)
-                    cmd_to_run = 'apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro '\
-                                 + self.containerLocation + ' ' + cmd_file.name
+                    cmd_to_run = 'apptainer exec --bind $PWD --bind /tmp --bind /cvmfs:/cvmfs:ro '\
+                                 + self.containerLocation + ' bash -c "source ' + cmd_file.name + '"'
+                    print('command to run: ', cmd_to_run)
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
                 except:
                     logger.error('Failed to build the application inside a container. '

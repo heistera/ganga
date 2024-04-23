@@ -195,7 +195,7 @@ class GaudiExec(IPrepareApp):
         'nMakeCores': SimpleItem(defvalue=1,
                                  doc='Number of cores to be provided via the "-j" option to the "make" command'\
                                      'when building the ganga-input-sandbox'),
-        'apptainerBuild' : SimpleItem(defvalue=False, doc="Run the build command in apptainer"),
+        'useApptainer' : SimpleItem(defvalue=False, doc="Run the commands in apptainer"),
         'containerLocation' : SimpleItem(defvalue='/cvmfs/cernvm-prod.cern.ch/cvm4',
                                          doc='Where is the container to use for the build located'),
         # Prepared job object
@@ -566,7 +566,7 @@ class GaudiExec(IPrepareApp):
             if cmd != 'make':
                 rc, stdout, stderr = _exec_cmd(cmd_file.name, self.directory)
         else:
-            if self.apptainerBuild or 'slc6' in self.platform:
+            if self.useApptainer or 'slc6' in self.platform:
                 try:
                     logger.info('Building inside apptainer: %s' % self.containerLocation)
                     cmd_to_run = 'apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro '\

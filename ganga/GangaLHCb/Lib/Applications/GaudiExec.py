@@ -584,8 +584,7 @@ class GaudiExec(IPrepareApp):
                     cmd_to_run = 'apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % os.environ['TMPDIR']\
                                  + self.containerLocation + ' bash -c "source ' + cmd_file.name + '"'
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
-                except BaseException as err:
-                    print(err)
+                except BaseException:
                     logger.error('Failed to build the application inside a container. '
                                  'Perhaps the specified container location is not accessible.')
                     raise GangaException('Failed to execute make command')

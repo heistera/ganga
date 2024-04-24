@@ -210,8 +210,6 @@ def prepareCommand(app):
             full_cmd += ' dbTags.py'
         if app.extraArgs:
             full_cmd += " " + " ".join(app.extraArgs)
-    if app.useApptainer or 'slc6' in app.platform:
-        full_cmd = 'apptainer exec --env "PATH=$PATH" --bind $PWD --bind /cvmfs:/cvmfs:ro %s  bash -c "%s"' % (app.containerLocation, full_cmd)
 
     return full_cmd
 
